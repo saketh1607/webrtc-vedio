@@ -108,6 +108,13 @@ function sendUserListToAll() {
 
 // Create HTTP server
 var httpServer = http.createServer(function(request, response) {
+  // Handle health check
+  if (request.url === '/health') {
+    response.writeHead(200);
+    response.end('OK');
+    return;
+  }
+
   // Handle WebSocket upgrade requests
   if (request.url === '/ws') {
     response.writeHead(200);
@@ -166,7 +173,7 @@ var httpServer = http.createServer(function(request, response) {
   });
 });
 
-// Get port from environment variable or use default
+// Get port from environment variable
 const PORT = process.env.PORT || 10000;
 
 // Spin up the HTTP server
