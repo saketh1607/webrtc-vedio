@@ -1,28 +1,3 @@
-//#!/usr/bin/env node
-//
-// WebSocket chat server
-// Implemented using Node.js
-//
-// Requires the websocket module.
-//
-// WebSocket and WebRTC based multi-user chat sample with two-way video
-// calling, including use of TURN if applicable or necessary.
-//
-// This file contains the JavaScript code that implements the server-side
-// functionality of the chat system, including user ID management, message
-// reflection, and routing of private messages, including support for
-// sending through unknown JSON objects to support custom apps and signaling
-// for WebRTC.
-//
-// Requires Node.js and the websocket module (WebSocket-Node):
-//
-//  - http://nodejs.org/
-//  - https://github.com/theturtle32/WebSocket-Node
-//
-// To read about how this sample works:  http://bit.ly/webrtc-from-chat
-//
-// Any copyright is dedicated to the Public Domain.
-// http://creativecommons.org/publicdomain/zero/1.0/
 
 "use strict";
 
@@ -46,9 +21,7 @@ function log(text) {
   console.log("[" + time.toLocaleTimeString() + "] " + text);
 }
 
-// If you want to implement support for blocking specific origins, this is
-// where you do it. Just return false to refuse WebSocket connections given
-// the specified origin.
+
 function originIsAllowed(origin) {
   return true;    // We will accept all connections
 }
@@ -153,7 +126,7 @@ var httpsServer = https.createServer(httpsOptions, function(request, response) {
 // Spin up the HTTPS server on the port assigned to this sample.
 // This will be turned into a WebSocket port very shortly.
 
-httpsServer.listen(443, function() {
+httpsServer.listen(443,'0.0.0.0', function() {
   log("Server is listening on port 443");
 });
 
