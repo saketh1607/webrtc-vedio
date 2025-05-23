@@ -1,4 +1,3 @@
-
 "use strict";
 
 var https = require('https');
@@ -123,11 +122,14 @@ var httpsServer = https.createServer(httpsOptions, function(request, response) {
   fileServer.serve(request, response);
 })
 
+// Get port from environment variable or use default
+const PORT = process.env.PORT || 443;
+
 // Spin up the HTTPS server on the port assigned to this sample.
 // This will be turned into a WebSocket port very shortly.
 
-httpsServer.listen(443,'0.0.0.0', function() {
-  log("Server is listening on port 443");
+httpsServer.listen(PORT, '0.0.0.0', function() {
+  log("Server is listening on port " + PORT);
 });
 
 // Create the WebSocket server by converting the HTTPS server into one.

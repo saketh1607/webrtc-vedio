@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: webrtc-video-call
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_VERSION
+        value: 16.x
+      - key: PORT
+        value: 443 
