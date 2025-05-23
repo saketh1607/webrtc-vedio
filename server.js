@@ -5,6 +5,7 @@ var fs = require('fs');
 var path = require('path');
 var WebSocketServer = require('websocket').server;
 
+var url = require('url');
 
 // Used for managing the text chat user list.
 
@@ -131,12 +132,17 @@ var httpServer = http.createServer(function(request, response) {
     response.end();
     return;
   }
+let parsedUrl = url.parse(request.url);
+let filePath = path.join(__dirname, parsedUrl.pathname);
+if (filePath === path.join(__dirname, '/')) {
+  filePath = path.join(__dirname, 'index.html');
+}
 
   // Handle static file requests
-  let filePath = path.join(__dirname, request.url);
-  if (filePath === path.join(__dirname, '/')) {
-    filePath = path.join(__dirname, 'index.html');
-  }
+  // let filePath = path.join(__dirname, request.url);
+  // if (filePath === path.join(__dirname, '/')) {
+  //   filePath = path.join(__dirname, 'index.html');
+  // }
 
   // Log the file path being requested
   log("Attempting to serve file: " + filePath);
