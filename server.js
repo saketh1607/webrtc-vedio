@@ -106,11 +106,26 @@ function sendUserListToAll() {
   }
 }
 
-var fileServer = new(nodeStatic.Server)();
+// Create a node-static server instance to serve files
+var fileServer = new(nodeStatic.Server)('./');
 
 // Create HTTP server
 var httpServer = http.createServer(function(request, response) {
-  fileServer.serve(request, response);
+  // Handle WebSocket upgrade requests
+  if (request.url === '/ws') {
+    response.writeHead(200);
+    response.end();
+    return;
+  }
+  
+  // Serve static files
+  fileServer.serve(request, response, function(err, result) {
+    if (err) {
+      log("Error serving " + request.url + " - " + err.message);
+      response.writeHead(err.status, err.headers);
+      response.end();
+    }
+  });
 });
 
 // Get port from environment variable or use default

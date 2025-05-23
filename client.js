@@ -101,7 +101,9 @@ function connect() {
   if (document.location.protocol === "https:") {
     scheme += "s";
   }
-  serverUrl = scheme + "://" + myHostname + ":443";
+  
+  // Use the current hostname and path for WebSocket connection
+  serverUrl = scheme + "://" + window.location.host + "/ws";
 
   connection = new WebSocket(serverUrl, "json");
 

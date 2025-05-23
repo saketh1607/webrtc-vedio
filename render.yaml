@@ -6,6 +6,6 @@ services:
     startCommand: node server.js
     envVars:
       - key: NODE_VERSION
-        value: 16.x
+        value: 18.x
       - key: PORT
         value: 10000 
