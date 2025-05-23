@@ -2,7 +2,7 @@
 
 var http = require('http');
 var fs = require('fs');
-var nodeStatic = require('node-static');
+var path = require('path');
 var WebSocketServer = require('websocket').server;
 
 
@@ -106,9 +106,6 @@ function sendUserListToAll() {
   }
 }
 
-// Create a node-static server instance to serve files
-var fileServer = new(nodeStatic.Server)('./');
-
 // Create HTTP server
 var httpServer = http.createServer(function(request, response) {
   // Handle WebSocket upgrade requests
@@ -117,13 +114,46 @@ var httpServer = http.createServer(function(request, response) {
     response.end();
     return;
   }
+
+  // Handle static file requests
+  let filePath = '.' + request.url;
+  if (filePath === './') {
+    filePath = './index.html';
+  }
+
+  const extname = path.extname(filePath);
+  let contentType = 'text/html';
   
-  // Serve static files
-  fileServer.serve(request, response, function(err, result) {
-    if (err) {
-      log("Error serving " + request.url + " - " + err.message);
-      response.writeHead(err.status, err.headers);
-      response.end();
+  switch (extname) {
+    case '.js':
+      contentType = 'text/javascript';
+      break;
+    case '.css':
+      contentType = 'text/css';
+      break;
+    case '.json':
+      contentType = 'application/json';
+      break;
+    case '.png':
+      contentType = 'image/png';
+      break;
+    case '.jpg':
+      contentType = 'image/jpg';
+      break;
+  }
+
+  fs.readFile(filePath, function(error, content) {
+    if (error) {
+      if(error.code === 'ENOENT') {
+        response.writeHead(404);
+        response.end('File not found');
+      } else {
+        response.writeHead(500);
+        response.end('Server Error: ' + error.code);
+      }
+    } else {
+      response.writeHead(200, { 'Content-Type': contentType });
+      response.end(content, 'utf-8');
     }
   });
 });

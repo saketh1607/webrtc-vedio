@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "description": "A simple WebSocket-based server with two-way WebRTC video call",
   "license": "MIT",
+  "engines": {
+    "node": "18.x"
+  },
   "dependencies": {
-    "node-static": "^0.7.11",
     "webrtc-adapter": "^7.2.4",
     "websocket": "^1.0.35"
   }
