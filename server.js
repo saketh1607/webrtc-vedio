@@ -1,6 +1,6 @@
 "use strict";
 
-var https = require('https');
+var http = require('http');
 var fs = require('fs');
 var nodeStatic = require('node-static');
 var WebSocketServer = require('websocket').server;
@@ -106,36 +106,24 @@ function sendUserListToAll() {
   }
 }
 
-// Load the key and certificate data to be used for our HTTPS/WSS
-// server.
-
-var httpsOptions = {
-  key: fs.readFileSync('cert/key.pem'),
-  cert: fs.readFileSync('cert/cert.pem')
-};
-
 var fileServer = new(nodeStatic.Server)();
 
-// Our HTTPS server act as a static web server to deliver static files and used for a WebSocket layer
-
-var httpsServer = https.createServer(httpsOptions, function(request, response) {
+// Create HTTP server
+var httpServer = http.createServer(function(request, response) {
   fileServer.serve(request, response);
-})
+});
 
 // Get port from environment variable or use default
-const PORT = process.env.PORT || 443;
+const PORT = process.env.PORT || 10000;
 
-// Spin up the HTTPS server on the port assigned to this sample.
-// This will be turned into a WebSocket port very shortly.
-
-httpsServer.listen(PORT, '0.0.0.0', function() {
+// Spin up the HTTP server
+httpServer.listen(PORT, '0.0.0.0', function() {
   log("Server is listening on port " + PORT);
 });
 
-// Create the WebSocket server by converting the HTTPS server into one.
-
+// Create the WebSocket server by converting the HTTP server into one
 var wsServer = new WebSocketServer({
-  httpServer: httpsServer,
+  httpServer: httpServer,
   autoAcceptConnections: false
 });
 
