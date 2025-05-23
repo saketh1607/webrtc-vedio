@@ -108,10 +108,20 @@ function sendUserListToAll() {
 
 // Create HTTP server
 var httpServer = http.createServer(function(request, response) {
+  // Log all incoming requests
+  log("Incoming request: " + request.method + " " + request.url);
+
   // Handle health check
   if (request.url === '/health') {
     response.writeHead(200);
     response.end('OK');
+    return;
+  }
+
+  // Handle favicon.ico request
+  if (request.url === '/favicon.ico') {
+    response.writeHead(204); // No Content
+    response.end();
     return;
   }
 
@@ -123,10 +133,13 @@ var httpServer = http.createServer(function(request, response) {
   }
 
   // Handle static file requests
-  let filePath = '.' + request.url;
-  if (filePath === './') {
-    filePath = './index.html';
+  let filePath = path.join(__dirname, request.url);
+  if (filePath === path.join(__dirname, '/')) {
+    filePath = path.join(__dirname, 'index.html');
   }
+
+  // Log the file path being requested
+  log("Attempting to serve file: " + filePath);
 
   const extname = path.extname(filePath);
   let contentType = 'text/html';
@@ -152,21 +165,19 @@ var httpServer = http.createServer(function(request, response) {
       break;
   }
 
-  // Log the file request
-  log("Requested file: " + filePath);
-
   fs.readFile(filePath, function(error, content) {
     if (error) {
       if(error.code === 'ENOENT') {
         log("File not found: " + filePath);
         response.writeHead(404);
-        response.end('File not found');
+        response.end('File not found: ' + filePath);
       } else {
-        log("Server error: " + error.code);
+        log("Server error: " + error.code + " for file: " + filePath);
         response.writeHead(500);
         response.end('Server Error: ' + error.code);
       }
     } else {
+      log("Successfully serving file: " + filePath);
       response.writeHead(200, { 'Content-Type': contentType });
       response.end(content, 'utf-8');
     }
@@ -179,6 +190,18 @@ const PORT = process.env.PORT || 10000;
 // Spin up the HTTP server
 httpServer.listen(PORT, '0.0.0.0', function() {
   log("Server is listening on port " + PORT);
+  log("Current working directory: " + process.cwd());
+  log("Server directory: " + __dirname);
+  log("Directory contents:");
+  fs.readdir(__dirname, (err, files) => {
+    if (err) {
+      log("Error reading directory: " + err);
+    } else {
+      files.forEach(file => {
+        log(" - " + file);
+      });
+    }
+  });
 });
 
 // Create the WebSocket server by converting the HTTP server into one
