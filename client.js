@@ -93,7 +93,7 @@ function setUsername() {
 
 function connect() {
   var serverUrl;
-  var scheme = "ws";
+  var scheme = "wss";
 
   // If this is an HTTPS connection, we have to use a secure WebSocket
   // connection too, so add another "s" to the scheme.
