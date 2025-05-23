@@ -140,14 +140,22 @@ var httpServer = http.createServer(function(request, response) {
     case '.jpg':
       contentType = 'image/jpg';
       break;
+    case '.ico':
+      contentType = 'image/x-icon';
+      break;
   }
+
+  // Log the file request
+  log("Requested file: " + filePath);
 
   fs.readFile(filePath, function(error, content) {
     if (error) {
       if(error.code === 'ENOENT') {
+        log("File not found: " + filePath);
         response.writeHead(404);
         response.end('File not found');
       } else {
+        log("Server error: " + error.code);
         response.writeHead(500);
         response.end('Server Error: ' + error.code);
       }
